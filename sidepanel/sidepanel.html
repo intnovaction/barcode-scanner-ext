@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emulador de pistola</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <header>
+    <img src="../icons/icon48.png" alt="" />
+    <div>
+      <h1>Emulador de pistola</h1>
+      <p id="pestana" class="pestana">Sin pestaña activa</p>
+    </div>
+  </header>
+
+  <main>
+    <div id="permiso" class="aviso" hidden>
+      <span>La extensión no tiene permiso en <strong id="permiso-origen"></strong>.</span>
+      <button id="autorizar" type="button">Autorizar este sitio</button>
+    </div>
+
+    <p class="ayuda">Pulsa un código: se teclea en el campo destino de la pestaña activa y termina con Enter.</p>
+
+    <div class="barra">
+      <button id="siguiente" type="button" class="primario">Leer siguiente</button>
+      <span id="posicion" class="posicion"></span>
+    </div>
+    <p id="atajo" class="hint atajo"></p>
+
+    <ul id="codigos" class="codigos"></ul>
+
+    <div id="estado" class="estado" hidden></div>
+
+    <details>
+      <summary>Códigos</summary>
+      <textarea id="texto-codigos" rows="6" placeholder="Un código por línea" spellcheck="false"></textarea>
+    </details>
+
+    <details id="seccion-sitios">
+      <summary>Sitios</summary>
+      <p class="hint">Páginas en las que la extensión puede teclear. Se autoriza el host completo (cualquier puerto y ruta).</p>
+      <ul id="sitios" class="sitios"></ul>
+      <div class="fila-anadir">
+        <input id="nuevo-sitio" type="text" spellcheck="false" placeholder="https://localhost o https://mi-app.ejemplo.com" />
+        <button id="anadir-sitio" type="button">Añadir</button>
+      </div>
+      <p id="error-sitio" class="hint error" hidden></p>
+    </details>
+
+    <details>
+      <summary>Ajustes</summary>
+      <label for="selector">Campo destino (selector CSS)</label>
+      <input id="selector" type="text" spellcheck="false" placeholder="Vacío = campo con foco" />
+      <p class="hint">Ejemplo: <code>#isbn</code> o <code>input[name='codigo']</code>. Vacío: se escribe en el campo que tenga el foco en la página.</p>
+
+      <div class="fila">
+        <div>
+          <label for="retardo-min">Retardo mín. (ms)</label>
+          <input id="retardo-min" type="number" min="0" step="5" />
+        </div>
+        <div>
+          <label for="retardo-max">Retardo máx. (ms)</label>
+          <input id="retardo-max" type="number" min="0" step="5" />
+        </div>
+        <div>
+          <label for="pausa-inicial">Pausa inicial (ms)</label>
+          <input id="pausa-inicial" type="number" min="0" step="50" />
+        </div>
+      </div>
+
+      <label class="check"><input id="enviar-enter" type="checkbox" /> Terminar con Enter</label>
+      <label class="check"><input id="sonido" type="checkbox" /> Sonido (pitido y tecleo)</label>
+      <button id="restablecer" type="button" class="secundario">Restablecer ajustes</button>
+    </details>
+  </main>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>
