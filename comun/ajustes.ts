@@ -5,6 +5,8 @@ export interface Ajustes {
   codigos: string;
   // Campo donde se "lee". Vacío = el elemento con foco en la página.
   selector: string;
+  // Nombre legible del campo (de su etiqueta, placeholder...), si se eligió con el ratón
+  descripcionCampo: string;
   sonido: boolean;
   // Haz rojo sobre el campo mientras se lee y destello verde/rojo al terminar
   efectoLaser: boolean;
@@ -23,6 +25,7 @@ export const AJUSTES_POR_DEFECTO: Ajustes = {
   codigos: "9788411209625\n9788411209694\n9788411829120\n9780000000000",
   // Primer campo cuyo id empieza por "Isbn_"
   selector: "input[id^='Isbn_']",
+  descripcionCampo: "ISBN",
   sonido: true,
   efectoLaser: true,
   retardoMin: 25,

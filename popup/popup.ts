@@ -2,14 +2,17 @@
 // La URL de la pestaña se ve gracias a activeTab (se concede al abrir el popup).
 
 import { cargarAjustes, guardarAjustes } from "../comun/ajustes.js";
+import { MensajeWidget } from "../comun/mensajes.js";
 import { patronDeUrl } from "../comun/sitios.js";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 let patron: string | null = null;
+let pestanaId: number | undefined;
 
 async function pintarSitio(): Promise<void> {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  pestanaId = tab?.id;
   patron = patronDeUrl(tab?.url);
   const autorizado = patron ? await chrome.permissions.contains({ origins: [patron] }) : false;
 
@@ -17,12 +20,13 @@ async function pintarSitio(): Promise<void> {
   const estado = $("estado-sitio");
   estado.className = "estado-sitio " + (autorizado ? "ok" : "no");
   estado.textContent = !patron
-    ? "La pistola solo funciona en páginas http o https."
+    ? "La pistola solo funciona en páginas web normales, no en las internas del navegador."
     : autorizado
-      ? "Sitio autorizado: el widget aparece en sus páginas."
-      : "Este sitio no está autorizado.";
+      ? "Página autorizada: la pistola aparece en ella."
+      : "Esta página no está autorizada.";
   $("autorizar").hidden = !patron || autorizado;
   $("quitar").hidden = !patron || !autorizado;
+  $("elegir-campo").hidden = !patron || !autorizado;
 }
 
 function mostrarError(e: unknown): void {
@@ -38,9 +42,9 @@ async function pintarAtajo(): Promise<void> {
   if (atajo) {
     const kbd = document.createElement("kbd");
     kbd.textContent = atajo;
-    p.append("Atajo para disparar desde la página: ", kbd);
+    p.append("Para disparar con el teclado: ", kbd);
   } else {
-    p.textContent = "Sin atajo de teclado: asígnalo en chrome://extensions/shortcuts";
+    p.textContent = "No hay atajo de teclado. Puedes ponerlo en chrome://extensions/shortcuts";
   }
 }
 
@@ -49,6 +53,17 @@ async function pintarAtajo(): Promise<void> {
 $("autorizar").addEventListener("click", () => {
   if (!patron) return;
   chrome.permissions.request({ origins: [patron] }).catch(mostrarError).finally(pintarSitio);
+});
+
+// Lo hace el widget de la página; el popup se cierra para dejar hacer clic en ella
+$("elegir-campo").addEventListener("click", async () => {
+  if (pestanaId === undefined) return;
+  try {
+    await chrome.tabs.sendMessage<MensajeWidget>(pestanaId, { tipo: "elegir-campo" });
+    window.close();
+  } catch {
+    mostrarError("La pistola no está en esta página. Recarga la página y vuelve a probar.");
+  }
 });
 
 $("quitar").addEventListener("click", () => {

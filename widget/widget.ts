@@ -5,11 +5,13 @@
 // queda donde lo dejó la aplicación tras la lectura anterior (p. ej. en la cantidad) y se puede
 // seguir tecleando sin volver a hacer clic en la página, como con una pistola real.
 
-import { Ajustes, AJUSTES_POR_DEFECTO, cargarAjustes, cargarIndice, guardarIndice, listaCodigos } from "../comun/ajustes.js";
+import { Ajustes, AJUSTES_POR_DEFECTO, cargarAjustes, cargarIndice, guardarAjustes, guardarIndice, listaCodigos } from "../comun/ajustes.js";
 import { MensajeFondo, MensajeWidget } from "../comun/mensajes.js";
+import { elegirCampo } from "./elegir.js";
 import { aplicarEstilos, ESTILOS } from "./estilos.js";
 import { apuntar, Laser } from "./laser.js";
 import { pitar, pitarError, teclear } from "./sonido.js";
+import { describirCampo, generarSelector } from "./selector.js";
 import { escribirCodigo, ResultadoLectura } from "./teclado.js";
 
 const ID_ANFITRION = "emulador-pistola-widget";
@@ -21,6 +23,7 @@ interface Posicion { x: number; y: number; }
 let ajustes: Ajustes = { ...AJUSTES_POR_DEFECTO };
 let indiceSiguiente = 0;
 let leyendo = false;
+let eligiendo = false;
 // Resultado de la última lectura de cada código en esta pestaña (por posición en la lista)
 const resultados = new Map<number, boolean>();
 let ultimoResultado: ResultadoLectura | null = null;
@@ -99,6 +102,29 @@ async function leer(indice: number): Promise<void> {
   await guardarIndice(indiceSiguiente);
 }
 
+// ---------- Elegir el campo destino ----------
+
+async function elegir(): Promise<void> {
+  if (!anfitrion || eligiendo || leyendo) return;
+  eligiendo = true;
+  pintar();
+  const campo = await elegirCampo(anfitrion);
+  eligiendo = false;
+  if (campo) {
+    const selector = generarSelector(campo);
+    if (selector) {
+      const descripcionCampo = describirCampo(campo);
+      ajustes = { ...ajustes, selector, descripcionCampo };
+      ultimoResultado = { ok: true, mensaje: `Campo elegido: ${descripcionCampo}` };
+      if (ajustes.efectoLaser) apuntar(campo, 0).terminar(true);
+      await guardarAjustes({ selector, descripcionCampo });
+    } else {
+      ultimoResultado = { ok: false, mensaje: "Ese campo no se puede elegir. En Opciones, elige «Donde esté el cursor»." };
+    }
+  }
+  pintar();
+}
+
 // ---------- Pintado ----------
 
 // Crea un elemento con sus propiedades e hijos (sin innerHTML: algunas páginas imponen Trusted Types)
@@ -134,16 +160,28 @@ function pintar(): void {
   const disparar = h("button", {
     type: "button",
     className: "disparar" + (leyendo ? " leyendo" : ""),
-    disabled: leyendo || lista.length === 0,
-    title: "Lee el código en la página y envía Enter",
+    disabled: leyendo || eligiendo || lista.length === 0,
+    title: "Escribe el código en el campo y pulsa Enter",
   },
     h("span", { className: "etiqueta", textContent: leyendo ? "Leyendo…" : "Disparar" }),
     h("span", { className: "codigo", textContent: lista[indiceSiguiente] ?? "Sin códigos" }));
   disparar.addEventListener("click", () => leer(indiceSiguiente));
 
   const info = h("div", { className: "info" },
-    h("span", { textContent: lista.length ? `${indiceSiguiente + 1} de ${lista.length}` : "" }),
-    h("span", { textContent: ajustes.selector ? "Campo: " + ajustes.selector : "Campo: el que tenga foco", title: "Campo destino" }));
+    h("span", { textContent: lista.length ? `${indiceSiguiente + 1} de ${lista.length}` : "" }));
+
+  const nombreCampo = ajustes.descripcionCampo || ajustes.selector || "donde esté el cursor";
+  const campo = h("button", {
+    type: "button",
+    className: "campo" + (eligiendo ? " eligiendo" : ""),
+    disabled: leyendo,
+    title: eligiendo
+      ? "Haz clic en un campo de la página (Esc para salir)"
+      : "Campo donde escribe la pistola. Pulsa para elegir otro.",
+  },
+    h("span", { className: "diana", textContent: "◎" }),
+    h("span", { className: "nombre", textContent: eligiendo ? "Haz clic en un campo…" : `Campo: ${nombreCampo}` }));
+  campo.addEventListener("click", elegir);
 
   const codigos = h("ul", { className: "codigos" });
   if (lista.length === 0) codigos.append(h("li", { className: "vacio", textContent: "Añade códigos en Opciones" }));
@@ -168,7 +206,7 @@ function pintar(): void {
 
   const widget = h("div", { className: "widget" + (plegado ? " plegado" : "") },
     cabecera,
-    h("div", { className: "cuerpo" }, disparar, info, codigos, estado, h("div", { className: "pie" }, opciones)));
+    h("div", { className: "cuerpo" }, disparar, info, campo, codigos, estado, h("div", { className: "pie" }, opciones)));
 
   // Se conserva la hoja de estilos de respaldo (<style>) si la hay
   raiz.querySelectorAll(".widget").forEach(e => e.remove());
@@ -226,6 +264,9 @@ chrome.storage.onChanged.addListener((cambios, area) => {
 chrome.runtime.onMessage.addListener((mensaje: MensajeWidget, _remitente, responder) => {
   if (mensaje.tipo === "leer-siguiente" && anfitrion) {
     leer(indiceSiguiente);
+    responder(true);
+  } else if (mensaje.tipo === "elegir-campo" && anfitrion) {
+    elegir();
     responder(true);
   } else if (mensaje.tipo === "permisos-retirados") {
     if (mensaje.origenes.includes(`${location.protocol}//${location.hostname}/*`)) desmontar();

@@ -77,6 +77,24 @@ button:disabled { cursor: default; opacity: .5; }
   font-size: 11px;
 }
 
+.campo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 6px;
+  padding: 5px 8px;
+  border: 1px dashed #93c5fd;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1e40af;
+  text-align: left;
+}
+.campo:hover:not(:disabled) { background: #dbeafe; }
+.campo.eligiendo { border-style: solid; border-color: #2563eb; background: #dbeafe; }
+.campo .diana { font-size: 14px; line-height: 1; }
+.campo .nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 .codigos {
   list-style: none;
   margin: 8px 0 0;

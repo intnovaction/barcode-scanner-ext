@@ -7,8 +7,8 @@
 import { aplicarEstilos } from "./estilos.js";
 
 // Holgura del marco alrededor del campo: justa para que el brillo no tape el borde
-const MARGEN_X = 3;
-const MARGEN_Y = 2;
+export const MARGEN_X = 3;
+export const MARGEN_Y = 2;
 const DURACION_FIN = 600;
 
 const ESTILOS_LASER = `

@@ -24,7 +24,7 @@ header h1 { margin: 0; font-size: 15px; }
 
 main { max-width: 800px; margin: 0 auto; padding: 8px 16px 32px; }
 
-section { padding: 16px 0; border-bottom: 1px solid #e5e7eb; }
+section { padding: 18px 0; border-bottom: 1px solid #e5e7eb; }
 section:last-child { border-bottom: 0; }
 h2 { margin: 0 0 6px; font-size: 14px; }
 [hidden] { display: none !important; }
@@ -100,6 +100,49 @@ textarea { font-family: Consolas, "Courier New", monospace; resize: vertical; }
 .fila-anadir { display: flex; gap: 6px; }
 .fila-anadir input { flex: 1; }
 .hint.error { color: #dc2626; }
+
+.opciones-campo { display: grid; gap: 8px; }
+.opcion-campo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  text-align: left;
+}
+.opcion-campo:hover { border-color: #9ca3af; }
+.opcion-campo.activa { border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; background: #eff6ff; }
+.opcion-campo .icono {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 15px;
+}
+.opcion-campo .icono.cursor { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
+.opcion-campo.activa .icono { background: #2563eb; color: #fff; }
+.texto { display: flex; flex-direction: column; gap: 2px; }
+.titulo-opcion { font-weight: 600; }
+.ayuda-opcion { color: #6b7280; font-size: 12px; }
+.chip {
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1e40af;
+  font-size: 12px;
+}
+
+details { margin-top: 10px; }
+summary { cursor: pointer; color: #374151; }
+details input { margin-top: 6px; }
 
 .fila { display: flex; gap: 8px; }
 .fila > div { flex: 1; }

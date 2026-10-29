@@ -34,7 +34,7 @@ chrome.commands.onCommand.addListener((comando, tab) => {
 function avisarSinWidget(tabId: number): void {
   chrome.action.setBadgeBackgroundColor({ color: "#dc2626", tabId });
   chrome.action.setBadgeText({ text: "!", tabId });
-  chrome.action.setTitle({ title: "Autoriza este sitio para usar la pistola", tabId });
+  chrome.action.setTitle({ title: "Esta página no está autorizada: pulsa aquí para autorizarla", tabId });
   setTimeout(() => {
     chrome.action.setBadgeText({ text: "", tabId }).catch(() => { });
     chrome.action.setTitle({ title: "", tabId }).catch(() => { });

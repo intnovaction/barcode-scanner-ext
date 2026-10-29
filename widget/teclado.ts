@@ -8,6 +8,8 @@ export interface ResultadoLectura {
 
 export interface OpcionesTecleo {
   selector: string;
+  // Nombre legible del campo, para los mensajes
+  descripcionCampo?: string;
   retardoMin: number;
   retardoMax: number;
   pausaInicial: number;
@@ -40,13 +42,13 @@ export async function escribirCodigo(
     return {
       ok: false,
       mensaje: opciones.selector
-        ? `No hay ningún campo que cumpla "${opciones.selector}"`
-        : "No hay ningún campo de texto con foco en la página",
+        ? `No encuentro el campo «${opciones.descripcionCampo || opciones.selector}» en esta página. Elige otro con ◎ Campo.`
+        : "El cursor no está en ningún campo. Haz clic en uno o elige uno con ◎ Campo.",
     };
   }
   const campo = elemento;
   if (campo.disabled || campo.readOnly) {
-    return { ok: false, mensaje: "El campo destino está deshabilitado o es de solo lectura" };
+    return { ok: false, mensaje: "En ese campo no se puede escribir (está bloqueado)." };
   }
 
   campo.focus();

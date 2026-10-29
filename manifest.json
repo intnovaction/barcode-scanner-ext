@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Emulador de pistola de códigos de barras",
   "version": "1.0.0",
-  "description": "Simula una pistola lectora de ISBN/EAN con un widget flotante en la página: teclea el código y termina con Enter, sin quitarle el foco a la aplicación.",
+  "description": "Hace de pistola lectora de códigos de barras (ISBN/EAN) en tus páginas web: escribe el código en el campo y pulsa Enter, sin quitarle el foco a la aplicación.",
   "author": "IntNovAction",
   "homepage_url": "https://www.intnovaction.com",
   "action": {
@@ -27,7 +27,7 @@
       "suggested_key": {
         "default": "Alt+Shift+L"
       },
-      "description": "Leer el siguiente código en la página activa"
+      "description": "Leer el siguiente código"
     }
   },
   "icons": {
