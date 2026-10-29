@@ -6,6 +6,8 @@ export interface Ajustes {
   // Campo donde se "lee". Vacío = el elemento con foco en la página.
   selector: string;
   sonido: boolean;
+  // Haz rojo sobre el campo mientras se lee y destello verde/rojo al terminar
+  efectoLaser: boolean;
   // Retardo aleatorio entre caracteres, en ms (una pistola real teclea en ~20-50 ms por carácter)
   retardoMin: number;
   retardoMax: number;
@@ -22,6 +24,7 @@ export const AJUSTES_POR_DEFECTO: Ajustes = {
   // Primer campo cuyo id empieza por "Isbn_"
   selector: "input[id^='Isbn_']",
   sonido: true,
+  efectoLaser: true,
   retardoMin: 25,
   retardoMax: 50,
   pausaInicial: 250,

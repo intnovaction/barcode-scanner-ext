@@ -100,6 +100,7 @@ function pintarAjustes(): void {
   ($("pausa-inicial") as HTMLInputElement).value = String(ajustes.pausaInicial);
   ($("enviar-enter") as HTMLInputElement).checked = ajustes.enviarEnter;
   ($("sonido") as HTMLInputElement).checked = ajustes.sonido;
+  ($("efecto-laser") as HTMLInputElement).checked = ajustes.efectoLaser;
   ($("mostrar-widget") as HTMLInputElement).checked = ajustes.mostrarWidget;
 }
 
@@ -129,10 +130,11 @@ function enlazarEventos(): void {
   numero("retardo-max", "retardoMax");
   numero("pausa-inicial", "pausaInicial");
 
-  const casilla = (id: string, clave: "enviarEnter" | "sonido" | "mostrarWidget") =>
+  const casilla = (id: string, clave: "enviarEnter" | "sonido" | "efectoLaser" | "mostrarWidget") =>
     $(id).addEventListener("change", e => cambiar({ [clave]: (e.target as HTMLInputElement).checked }));
   casilla("enviar-enter", "enviarEnter");
   casilla("sonido", "sonido");
+  casilla("efecto-laser", "efectoLaser");
   casilla("mostrar-widget", "mostrarWidget");
 
   $("restablecer").addEventListener("click", async () => {

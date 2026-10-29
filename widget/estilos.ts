@@ -116,3 +116,17 @@ button:disabled { cursor: default; opacity: .5; }
 .plegado .cuerpo > :not(.disparar) { display: none; }
 [hidden] { display: none !important; }
 `;
+
+// Aplica una hoja de estilos a un shadow root. Si el navegador no admite hojas construidas, se
+// recurre a un <style> (que sí depende del CSP de la página).
+export function aplicarEstilos(destino: ShadowRoot, css: string): void {
+  try {
+    const hoja = new CSSStyleSheet();
+    hoja.replaceSync(css);
+    destino.adoptedStyleSheets = [hoja];
+  } catch {
+    const estilo = document.createElement("style");
+    estilo.textContent = css;
+    destino.append(estilo);
+  }
+}

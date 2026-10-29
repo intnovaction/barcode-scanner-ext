@@ -22,6 +22,7 @@ Se usa el *setter* nativo de `HTMLInputElement.prototype.value` (y no `campo.val
 ## Funcionalidades
 
 - **Widget flotante en la página** (en los sitios autorizados): un botón **Disparar** con el código que toca, la lista de códigos (clic en uno = una lectura), la posición (`2 de 4`), una marca ✓/✗ con el resultado de cada lectura y el mensaje de la última. Se puede **arrastrar** por la cabecera y **plegar** para dejar solo el botón Disparar; la posición y el plegado se recuerdan.
+- **Efecto láser**: al disparar, un haz rojo apunta al campo destino y lo cruza de izquierda a derecha al ritmo del tecleo, dejando iluminada la parte leída: llega al final con el último carácter, justo antes del Enter. Al terminar, el campo destella en verde (leído) o en rojo (error). El destello sigue al campo aunque la aplicación lo mueva al añadir la línea. Se puede desactivar en Opciones.
 - **No quita el foco**: ningún clic en el widget se lleva el foco de la página (ver [El foco](#el-foco)).
 - **Atajo de teclado `Alt+Shift+L`**: dispara sin tocar el ratón, aunque el widget esté oculto. Se puede cambiar en `chrome://extensions/shortcuts`. Si la pestaña no tiene widget (sitio sin autorizar), el icono muestra un `!` rojo unos segundos.
 - **Leer en orden**: Disparar recorre la lista y vuelve al principio al final. La posición se comparte entre pestañas; si una lectura falla, no avanza.
@@ -62,6 +63,7 @@ barcode-scanner-ext/
 │   ├── widget.ts           ← widget flotante (shadow DOM), lectura y posición
 │   ├── estilos.ts          ← CSS del widget
 │   ├── teclado.ts          ← teclea el código en el campo destino y envía Enter
+│   ├── laser.ts            ← haz rojo que cruza el campo al ritmo del tecleo y destello al terminar
 │   └── sonido.ts           ← pitido, pitido de error y tecleo (Web Audio)
 ├── popup/                  ← popup del icono: autorizar / quitar el sitio, mostrar el widget
 ├── opciones/               ← página de opciones: códigos, sitios y ajustes

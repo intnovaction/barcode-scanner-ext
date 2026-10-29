@@ -23,11 +23,17 @@ function elementoConFoco(): Element | null {
   return elemento;
 }
 
-// alTeclear se llama en cada carácter (para el sonido del tecleo)
+export interface AvisosTecleo {
+  // Campo destino localizado, justo antes de la pausa inicial (para el efecto láser)
+  alApuntar(campo: HTMLElement): void;
+  // Cada carácter, justo antes de teclearlo (para el sonido y el avance del láser)
+  alTeclear(tecleados: number, total: number): void;
+}
+
 export async function escribirCodigo(
   codigo: string,
   opciones: OpcionesTecleo,
-  alTeclear: () => void,
+  avisos: AvisosTecleo,
 ): Promise<ResultadoLectura> {
   const elemento = opciones.selector ? document.querySelector(opciones.selector) : elementoConFoco();
   if (!(elemento instanceof HTMLInputElement) && !(elemento instanceof HTMLTextAreaElement)) {
@@ -44,14 +50,16 @@ export async function escribirCodigo(
   }
 
   campo.focus();
+  avisos.alApuntar(campo);
   await esperar(opciones.pausaInicial);
 
   // Se usa el setter nativo para que el framework (React/Preact) vea el cambio igual que con el teclado
   const prototipo = campo instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
   const setterValor = Object.getOwnPropertyDescriptor(prototipo, "value")!.set!;
-  for (const caracter of codigo) {
+  const caracteres = [...codigo];
+  for (const [i, caracter] of caracteres.entries()) {
     const tecla = { key: caracter, bubbles: true, cancelable: true };
-    alTeclear();
+    avisos.alTeclear(i + 1, caracteres.length);
     campo.dispatchEvent(new KeyboardEvent("keydown", tecla));
     setterValor.call(campo, campo.value + caracter);
     campo.dispatchEvent(new InputEvent("input", { data: caracter, inputType: "insertText", bubbles: true }));

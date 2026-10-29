@@ -7,7 +7,8 @@
 
 import { Ajustes, AJUSTES_POR_DEFECTO, cargarAjustes, cargarIndice, guardarIndice, listaCodigos } from "../comun/ajustes.js";
 import { MensajeFondo, MensajeWidget } from "../comun/mensajes.js";
-import { ESTILOS } from "./estilos.js";
+import { aplicarEstilos, ESTILOS } from "./estilos.js";
+import { apuntar, Laser } from "./laser.js";
 import { pitar, pitarError, teclear } from "./sonido.js";
 import { escribirCodigo, ResultadoLectura } from "./teclado.js";
 
@@ -45,7 +46,7 @@ export async function montar(): Promise<void> {
   anfitrion = document.createElement("div");
   anfitrion.id = ID_ANFITRION;
   raiz = anfitrion.attachShadow({ mode: "closed" });
-  aplicarEstilos(raiz);
+  aplicarEstilos(raiz, ESTILOS);
   // Ningún clic en el widget debe quitarle el foco a la página
   raiz.addEventListener("mousedown", e => e.preventDefault());
 
@@ -60,18 +61,6 @@ function desmontar(): void {
   raiz = null;
 }
 
-function aplicarEstilos(destino: ShadowRoot): void {
-  try {
-    const hoja = new CSSStyleSheet();
-    hoja.replaceSync(ESTILOS);
-    destino.adoptedStyleSheets = [hoja];
-  } catch {
-    const estilo = document.createElement("style");
-    estilo.textContent = ESTILOS;
-    destino.append(estilo);
-  }
-}
-
 // ---------- Lectura ----------
 
 async function leer(indice: number): Promise<void> {
@@ -83,12 +72,22 @@ async function leer(indice: number): Promise<void> {
   indiceSiguiente = indice;
   pintar();
   let resultado: ResultadoLectura;
+  let laser: Laser | null = null;
   try {
     if (ajustes.sonido) pitar();
-    resultado = await escribirCodigo(codigo, ajustes, ajustes.sonido ? teclear : () => { });
+    resultado = await escribirCodigo(codigo, ajustes, {
+      alApuntar: campo => {
+        if (ajustes.efectoLaser) laser = apuntar(campo, (ajustes.retardoMin + ajustes.retardoMax) / 2);
+      },
+      alTeclear: (tecleados, total) => {
+        if (ajustes.sonido) teclear();
+        (laser as Laser | null)?.avanzar(tecleados / total);
+      },
+    });
   } catch (e) {
     resultado = { ok: false, mensaje: e instanceof Error ? e.message : String(e) };
   }
+  (laser as Laser | null)?.terminar(resultado.ok);
 
   resultados.set(indice, resultado.ok);
   ultimoResultado = resultado;
