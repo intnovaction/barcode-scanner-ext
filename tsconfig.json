@@ -12,6 +12,6 @@
     "outDir": ".",
     "sourceMap": false
   },
-  "include": ["sidepanel/**/*.ts", "background.ts"],
+  "include": ["background.ts", "comun/**/*.ts", "widget/**/*.ts", "popup/**/*.ts", "opciones/**/*.ts"],
   "exclude": []
 }

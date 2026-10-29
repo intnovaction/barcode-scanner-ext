@@ -1,5 +1,6 @@
-// Sonidos de la pistola. Se reproducen en el panel lateral (página de la extensión) y no en la
-// página destino: allí el clic no es un gesto del usuario y el AudioContext arrancaría suspendido.
+// Sonidos de la pistola. Se reproducen en la propia página, así que siguen su política de
+// autoplay: basta con que el usuario haya hecho clic o tecleado algo en ella (también vale el clic
+// en el widget). Una lectura por atajo nada más cargar la página puede quedar en silencio.
 
 let contextoAudio: AudioContext | null = null;
 const obtenerAudio = (): AudioContext => {

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emulador de pistola</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <img src="../icons/icon48.png" alt="" />
+    <div>
+      <h1>Emulador de pistola</h1>
+      <p id="pestana" class="pestana">Sin pestaña activa</p>
+    </div>
+  </header>
+
+  <main>
+    <p id="estado-sitio" class="estado-sitio"></p>
+    <button id="autorizar" type="button" class="primario" hidden>Autorizar este sitio</button>
+    <button id="quitar" type="button" hidden>Quitar este sitio</button>
+    <p id="error" class="error" hidden></p>
+
+    <label class="check"><input id="mostrar-widget" type="checkbox" /> Mostrar el widget en la página</label>
+    <p id="atajo" class="hint"></p>
+
+    <button id="opciones" type="button" class="enlace">Códigos, sitios y ajustes…</button>
+  </main>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emulador de pistola - Opciones</title>
+  <link rel="stylesheet" href="opciones.css" />
+</head>
+<body>
+  <header>
+    <img src="../icons/icon48.png" alt="" />
+    <div>
+      <h1>Emulador de pistola</h1>
+      <p class="subtitulo">Opciones</p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>Códigos</h2>
+      <p class="hint">Un código por línea. El widget los lee en orden con <strong>Disparar</strong> y vuelve al principio al acabar.</p>
+      <textarea id="texto-codigos" rows="8" placeholder="Un código por línea" spellcheck="false"></textarea>
+      <div class="barra">
+        <span id="posicion" class="hint"></span>
+        <button id="reiniciar-posicion" type="button">Volver al primero</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Sitios</h2>
+      <p class="hint">Páginas en las que aparece el widget y la extensión puede teclear. Se autoriza el host completo (cualquier puerto y ruta).</p>
+      <ul id="sitios" class="sitios"></ul>
+      <div class="fila-anadir">
+        <input id="nuevo-sitio" type="text" spellcheck="false" placeholder="localhost:5002 o https://mi-app.ejemplo.com" />
+        <button id="anadir-sitio" type="button">Añadir</button>
+      </div>
+      <p id="error-sitio" class="hint error" hidden></p>
+    </section>
+
+    <section>
+      <h2>Ajustes</h2>
+      <label for="selector">Campo destino (selector CSS)</label>
+      <input id="selector" type="text" spellcheck="false" placeholder="Vacío = campo con foco" />
+      <p class="hint">Ejemplo: <code>#isbn</code> o <code>input[name='codigo']</code>. Vacío: se escribe en el campo que tenga el foco en la página.</p>
+
+      <div class="fila">
+        <div>
+          <label for="retardo-min">Retardo mín. entre caracteres (ms)</label>
+          <input id="retardo-min" type="number" min="0" step="5" />
+        </div>
+        <div>
+          <label for="retardo-max">Retardo máx. entre caracteres (ms)</label>
+          <input id="retardo-max" type="number" min="0" step="5" />
+        </div>
+        <div>
+          <label for="pausa-inicial">Pausa inicial (ms)</label>
+          <input id="pausa-inicial" type="number" min="0" step="50" />
+        </div>
+      </div>
+
+      <label class="check"><input id="enviar-enter" type="checkbox" /> Terminar con Enter</label>
+      <label class="check"><input id="sonido" type="checkbox" /> Sonido (pitido y tecleo)</label>
+      <label class="check"><input id="mostrar-widget" type="checkbox" /> Mostrar el widget en los sitios autorizados</label>
+      <button id="restablecer" type="button" class="secundario">Restablecer ajustes</button>
+    </section>
+
+    <section>
+      <h2>Atajo de teclado</h2>
+      <p id="atajo"></p>
+      <p class="hint">Dispara desde la página sin tocar el ratón, aunque el widget esté oculto. Se cambia en <code>chrome://extensions/shortcuts</code>.</p>
+    </section>
+  </main>
+
+  <script type="module" src="opciones.js"></script>
+</body>
+</html>

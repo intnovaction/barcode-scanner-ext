@@ -1,6 +1,5 @@
 node_modules/
-sidepanel/**/*.js
-background.js
+*.js
 obj/
 *.zip
 .vs/

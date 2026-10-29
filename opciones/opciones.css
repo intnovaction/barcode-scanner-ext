@@ -20,41 +20,24 @@ header {
 header img { width: 32px; height: 32px; }
 header h1 { margin: 0; font-size: 15px; }
 
-.pestana {
-  margin: 2px 0 0;
-  font-size: 11px;
-  opacity: .8;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 260px;
-}
+.subtitulo { margin: 2px 0 0; font-size: 11px; opacity: .8; }
 
-main { padding: 12px 16px 24px; }
+main { max-width: 640px; margin: 0 auto; padding: 8px 16px 32px; }
+
+section { padding: 16px 0; border-bottom: 1px solid #e5e7eb; }
+section:last-child { border-bottom: 0; }
+h2 { margin: 0 0 6px; font-size: 14px; }
+[hidden] { display: none !important; }
 
 .ayuda, .hint { color: #6b7280; margin: 0 0 10px; }
 .hint { font-size: 11px; margin-top: 4px; }
 
-.aviso {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px;
-  margin-bottom: 12px;
-  border: 1px solid #f59e0b;
-  border-radius: 6px;
-  background: #fffbeb;
-}
-.aviso[hidden] { display: none; }
-
 .barra {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  margin-top: 8px;
 }
-.posicion { color: #6b7280; font-size: 12px; }
-.atajo { margin: 0 0 8px; }
 kbd {
   padding: 1px 5px;
   border: 1px solid #d1d5db;
@@ -74,45 +57,7 @@ button {
   cursor: pointer;
 }
 button:disabled { opacity: .5; cursor: default; }
-button.primario { background: #1f2937; border-color: #1f2937; color: #fff; }
 button.secundario { margin-top: 10px; }
-
-.codigos {
-  list-style: none;
-  margin: 0 0 12px;
-  padding: 0;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  max-height: 320px;
-  overflow-y: auto;
-}
-.codigos li + li { border-top: 1px solid #e5e7eb; }
-.codigos button {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  border: 0;
-  border-radius: 0;
-  padding: 6px 10px;
-  text-align: left;
-  font-family: Consolas, "Courier New", monospace;
-}
-.codigos button:hover:not(:disabled) { background: #f3f4f6; }
-.codigos .actual button { background: #eff6ff; }
-.codigos .vacio { padding: 8px 10px; color: #6b7280; }
-.marca-ok { color: #059669; }
-.marca-error { color: #dc2626; }
-
-.estado {
-  padding: 8px 10px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-}
-.estado.ok { background: #ecfdf5; color: #065f46; }
-.estado.error { background: #fef2f2; color: #991b1b; }
-
-details { margin-top: 8px; border-top: 1px solid #e5e7eb; padding-top: 8px; }
-summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
 
 label { display: block; margin: 8px 0 4px; font-weight: 500; }
 label.check { display: flex; align-items: center; gap: 6px; font-weight: 400; }

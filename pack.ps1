@@ -5,7 +5,7 @@
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
 
-# Recompila sidepanel/*.js y background.js desde *.ts para asegurar que el ZIP incluye
+# Recompila los .js desde los .ts para asegurar que el ZIP incluye
 # siempre el JS más reciente.
 Push-Location $root
 try {
@@ -20,7 +20,7 @@ $version  = $manifest.version
 $output   = Join-Path $root "barcode-scanner-ext-$version.zip"
 
 # Solo se incluye lo que necesita la extensión; se excluye el tooling (*.ts, tsconfig, etc.).
-$include = @("manifest.json", "background.js", "sidepanel", "icons")
+$include = @("manifest.json", "background.js", "comun", "widget", "popup", "opciones", "icons")
 
 $staging = Join-Path $root "obj\pack-staging"
 if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }

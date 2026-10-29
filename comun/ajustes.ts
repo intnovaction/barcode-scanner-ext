@@ -12,6 +12,8 @@ export interface Ajustes {
   // Pausa entre el pitido y el primer carácter, en ms
   pausaInicial: number;
   enviarEnter: boolean;
+  // Mostrar el widget flotante en los sitios autorizados (el atajo de teclado funciona igualmente)
+  mostrarWidget: boolean;
 }
 
 export const AJUSTES_POR_DEFECTO: Ajustes = {
@@ -24,6 +26,7 @@ export const AJUSTES_POR_DEFECTO: Ajustes = {
   retardoMax: 50,
   pausaInicial: 250,
   enviarEnter: true,
+  mostrarWidget: true,
 };
 
 export async function cargarAjustes(): Promise<Ajustes> {
@@ -35,7 +38,7 @@ export async function guardarAjustes(cambios: Partial<Ajustes>): Promise<void> {
 }
 
 // Posición del código que leerá "Leer siguiente". Se guarda aparte de los ajustes porque la
-// comparten el panel y el atajo de teclado (background).
+// comparten los widgets de todas las pestañas.
 export async function cargarIndice(): Promise<number> {
   const { indiceSiguiente } = await chrome.storage.local.get({ indiceSiguiente: 0 });
   return indiceSiguiente as number;

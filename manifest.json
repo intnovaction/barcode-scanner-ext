@@ -2,19 +2,21 @@
   "manifest_version": 3,
   "name": "Emulador de pistola de códigos de barras",
   "version": "1.0.0",
-  "description": "Simula una pistola lectora de ISBN/EAN: teclea el código en la página activa y termina con Enter.",
+  "description": "Simula una pistola lectora de ISBN/EAN con un widget flotante en la página: teclea el código y termina con Enter, sin quitarle el foco a la aplicación.",
   "author": "IntNovAction",
   "homepage_url": "https://www.intnovaction.com",
   "action": {
-    "default_title": "Emulador de pistola - abrir panel",
+    "default_title": "Emulador de pistola",
+    "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
   },
-  "side_panel": {
-    "default_path": "sidepanel/sidepanel.html"
+  "options_ui": {
+    "page": "opciones/opciones.html",
+    "open_in_tab": true
   },
   "background": {
     "service_worker": "background.js",
@@ -33,9 +35,26 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage", "sidePanel", "scripting", "tabs"],
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab"
+  ],
   "optional_host_permissions": [
     "http://*/*",
     "https://*/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "widget/*.js",
+        "comun/*.js",
+        "icons/*.png"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
   ]
 }

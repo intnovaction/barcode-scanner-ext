@@ -1,53 +1,46 @@
-import { cargarAjustes, cargarIndice, guardarIndice, listaCodigos } from "./sidepanel/lib/ajustes.js";
-import { leerEnPestana, ResultadoLectura } from "./sidepanel/lib/inyeccion.js";
-import { avisarPanel } from "./sidepanel/lib/mensajes.js";
+import { MensajeFondo, MensajeWidget } from "./comun/mensajes.js";
+import { inyectarWidget, sincronizarWidget, sitiosAutorizados } from "./comun/sitios.js";
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+// Al instalar o recargar la extensión: registrar el widget y montarlo en las pestañas ya abiertas
+chrome.runtime.onInstalled.addListener(async () => {
+  await sincronizarWidget();
+  await inyectarWidget(await sitiosAutorizados());
 });
 
-// Atajo "Leer siguiente": lee sin sacar el foco de la página, así la aplicación puede mover el
-// foco tras la lectura (p. ej. a una cantidad) y se sigue tecleando en ella sin hacer clic.
-let leyendo = false;
+chrome.permissions.onAdded.addListener(async ({ origins = [] }) => {
+  await sincronizarWidget();
+  await inyectarWidget(origins);
+});
 
-chrome.commands.onCommand.addListener(async (comando, tab) => {
-  if (comando !== "leer-siguiente" || leyendo || tab?.id === undefined) return;
-
-  const ajustes = await cargarAjustes();
-  const lista = listaCodigos(ajustes.codigos);
-  if (lista.length === 0) return;
-  const indice = (await cargarIndice()) % lista.length;
-  const codigo = lista[indice];
-
-  const fin = (resultado: ResultadoLectura, siguiente: number) =>
-    avisarPanel({ tipo: "lectura-fin", indice, siguiente, resultado });
-
-  if (!(await tienePermiso(tab.url))) {
-    fin({ ok: false, mensaje: "Autoriza primero este sitio" }, indice);
-    return;
-  }
-
-  leyendo = true;
-  try {
-    avisarPanel({ tipo: "lectura-inicio", indice, codigo });
-    const resultado = await leerEnPestana(tab.id, codigo, ajustes);
-    const siguiente = resultado.ok ? (indice + 1) % lista.length : indice;
-    await guardarIndice(siguiente);
-    fin(resultado, siguiente);
-  } catch (e) {
-    fin({ ok: false, mensaje: e instanceof Error ? e.message : String(e) }, indice);
-  } finally {
-    leyendo = false;
+chrome.permissions.onRemoved.addListener(async ({ origins = [] }) => {
+  await sincronizarWidget();
+  // Sin permiso ya no se puede consultar la URL de esas pestañas: se avisa a todas y cada widget
+  // decide si su sitio está entre los retirados
+  const mensaje: MensajeWidget = { tipo: "permisos-retirados", origenes: origins };
+  for (const tab of await chrome.tabs.query({})) {
+    if (tab.id !== undefined) chrome.tabs.sendMessage(tab.id, mensaje).catch(() => { });
   }
 });
 
-async function tienePermiso(url: string | undefined): Promise<boolean> {
-  if (!url) return false;
-  try {
-    const u = new URL(url);
-    if (u.protocol !== "http:" && u.protocol !== "https:") return false;
-    return await chrome.permissions.contains({ origins: [`${u.protocol}//${u.hostname}/*`] });
-  } catch {
-    return false;
-  }
+// Atajo "Leer siguiente": lo hace el widget de la pestaña, sin sacar el foco de la página
+chrome.commands.onCommand.addListener((comando, tab) => {
+  if (comando !== "leer-siguiente" || tab?.id === undefined) return;
+  const tabId = tab.id;
+  const mensaje: MensajeWidget = { tipo: "leer-siguiente" };
+  chrome.tabs.sendMessage(tabId, mensaje).catch(() => avisarSinWidget(tabId));
+});
+
+// No hay widget en la pestaña (sitio sin autorizar o página no compatible): "!" en el icono
+function avisarSinWidget(tabId: number): void {
+  chrome.action.setBadgeBackgroundColor({ color: "#dc2626", tabId });
+  chrome.action.setBadgeText({ text: "!", tabId });
+  chrome.action.setTitle({ title: "Autoriza este sitio para usar la pistola", tabId });
+  setTimeout(() => {
+    chrome.action.setBadgeText({ text: "", tabId }).catch(() => { });
+    chrome.action.setTitle({ title: "", tabId }).catch(() => { });
+  }, 3000);
 }
+
+chrome.runtime.onMessage.addListener((mensaje: MensajeFondo) => {
+  if (mensaje.tipo === "abrir-opciones") chrome.runtime.openOptionsPage();
+});
