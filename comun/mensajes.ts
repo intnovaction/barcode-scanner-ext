@@ -9,5 +9,8 @@ export type MensajeWidget =
   // Se han retirado permisos: el widget se quita si su sitio está entre ellos
   | { tipo: "permisos-retirados"; origenes: string[] };
 
-// Widget → background (un content script no puede abrir la página de opciones)
-export type MensajeFondo = { tipo: "abrir-opciones" };
+// Widget → background (un content script no puede abrir la página de opciones ni leer los atajos)
+export type MensajeFondo =
+  | { tipo: "abrir-opciones" }
+  // Responde con el atajo de "Leer siguiente" ("" si no hay)
+  | { tipo: "pedir-atajo" };

@@ -1,12 +1,19 @@
 {
   "manifest_version": 3,
   "name": "Emulador de pistola de códigos de barras",
+  "short_name": "Pistola de códigos",
   "version": "1.0.0",
-  "description": "Hace de pistola lectora de códigos de barras (ISBN/EAN) en tus páginas web: escribe el código en el campo y pulsa Enter, sin quitarle el foco a la aplicación.",
+  "description": "Simula una pistola lectora de códigos de barras (ISBN/EAN): escribe el código en el campo y pulsa Enter, sin mover el cursor.",
   "author": "IntNovAction",
   "homepage_url": "https://www.intnovaction.com",
+  "minimum_chrome_version": "102",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "action": {
-    "default_title": "Emulador de pistola",
+    "default_title": "Pistola de códigos: autorizar esta página, elegir el campo y más opciones",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -27,13 +34,8 @@
       "suggested_key": {
         "default": "Alt+Shift+L"
       },
-      "description": "Leer el siguiente código"
+      "description": "Disparar: leer el siguiente código en la página"
     }
-  },
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
   },
   "permissions": [
     "storage",

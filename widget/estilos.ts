@@ -72,10 +72,22 @@ button:disabled { cursor: default; opacity: .5; }
 .info {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 6px 2px 0;
   color: #6b7280;
   font-size: 11px;
 }
+.atajo { cursor: help; font-size: 12px; margin-bottom: 2px; }
+kbd {
+  padding: 1px 6px;
+  border: 1px solid #d1d5db;
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: #f9fafb;
+  color: #374151;
+  font: 600 12px Consolas, "Courier New", monospace;
+}
+.plegado .info { margin-top: 8px; }
 
 .campo {
   display: flex;
@@ -128,10 +140,21 @@ button:disabled { cursor: default; opacity: .5; }
 .estado.error { background: #fef2f2; color: #991b1b; }
 
 .pie { margin-top: 8px; text-align: right; }
-.enlace { color: #2563eb; }
-.enlace:hover { text-decoration: underline; }
+.enlace {
+  padding: 1px 4px;
+  margin-right: -4px;
+  border-radius: 4px;
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color .12s, background-color .12s;
+}
+.enlace:hover { color: #1d4ed8; background: #dbeafe; text-decoration-thickness: 2px; }
 
-.plegado .cuerpo > :not(.disparar) { display: none; }
+/* Plegada: solo Disparar y, debajo, el atajo para disparar sin ratón */
+.plegado .cuerpo > :not(.disparar):not(.info) { display: none; }
+.plegado .info { justify-content: center; }
+.plegado .info > :not(.atajo) { display: none; }
 [hidden] { display: none !important; }
 `;
 

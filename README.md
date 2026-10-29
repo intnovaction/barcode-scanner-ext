@@ -16,7 +16,7 @@ La extensión hace lo mismo: pones en la página una pequeña "pistola" flotante
 
 ## Instalación
 
-Mientras no esté publicada en la tienda de Chrome, se instala a mano:
+Funciona en Chrome o Edge, versión 102 o posterior. Mientras no esté publicada en la tienda de Chrome, se instala a mano:
 
 1. Descarga o clona esta carpeta y, dentro de ella, ejecuta `npm install` y `npm run build` (hace falta tener [Node.js](https://nodejs.org)).
 2. En Chrome, abre `chrome://extensions` (en Edge, `edge://extensions`).
@@ -36,16 +36,16 @@ Más cosas que puedes hacer:
 
 - **Disparar con el teclado**: `Alt+Shift+L` lee el siguiente código sin tocar el ratón.
 - **Leer un código concreto**: haz clic en él en la lista de la pistola.
-- **Moverla**: arrástrala por la barra de arriba.
-- **Hacerla pequeña**: pulsa la flecha de arriba a la derecha para dejar solo el botón Disparar.
+- **Moverla**: arrástrala por la barra de arriba. Se queda donde la dejes en todas las páginas; para devolverla abajo a la derecha, pulsa **↘** en esa barra o haz doble clic en ella.
+- **Hacerla pequeña**: pulsa la flecha de arriba a la derecha para dejar solo el botón Disparar y el atajo de teclado.
 
 ### La pistola
 
-- **Disparar**: lee el siguiente código. Debajo se ve cuál toca y por dónde vas (`2 de 4`). Cuando llega al último, vuelve a empezar.
+- **Disparar**: lee el siguiente código. Debajo se ve cuál toca, por dónde vas (`2 de 4`) y el atajo para disparar sin ratón (`Sin ratón: Alt+Shift+L`). Cuando llega al último, vuelve a empezar.
 - **◎ Campo**: el campo donde escribe. Púlsalo para elegir otro.
 - **Lista de códigos**: ✓ si se escribió bien y ✗ si no se pudo escribir.
 - **Mensaje**: qué ha pasado en la última lectura.
-- **Opciones**: abre la página de opciones.
+- **Más opciones**: abre la página de opciones.
 
 La extensión solo sabe si ha podido escribir el código. Si el código existe o no en tu aplicación, lo dice tu aplicación, igual que con una pistola de verdad.
 
@@ -60,7 +60,7 @@ Al pulsar el icono de la extensión en la barra del navegador puedes:
 
 ### Opciones
 
-- **Códigos a leer**: la lista de códigos, uno por línea. Trae tres ISBN de ejemplo y uno que no existe (`9780000000000`) para ver cómo avisa tu aplicación. **Volver al primero** empieza la lista de nuevo.
+- **Códigos a leer**: la lista de códigos, uno por línea. Trae tres ISBN de ejemplo y uno que no existe (`9780000000000`) para ver cómo avisa tu aplicación. **Volver al primero** empieza la lista de nuevo y **Poner códigos de ejemplo** vuelve a poner los de ejemplo (si tenías otros, pide confirmación antes de sustituirlos).
 - **Páginas donde funciona**: puedes añadir una escribiendo su dirección (por ejemplo `localhost:5002` o `https://mi-app.ejemplo.com`) o quitarla. Al autorizar una dirección vale para todas sus páginas. Aquí también se puede ocultar la pistola (**Mostrar la pistola en estas páginas**).
 - **Dónde se escribe el código**: elige entre **Un campo concreto** (el elegido con **◎ Campo** en la pistola) o **Donde esté el cursor** (el campo en el que hayas hecho clic antes de disparar). Si pasas a "donde esté el cursor", se recuerda el campo para poder volver a él con un clic. Quien sepa CSS puede escribirlo a mano en *Avanzado*.
 - **Velocidad y efectos**:
@@ -68,6 +68,15 @@ Al pulsar el icono de la extensión en la barra del navegador puedes:
   - **Pulsar Enter al terminar**, **Sonido** y **Rayo láser**: se activan o desactivan.
   - **Volver a los valores de fábrica**: solo afecta a esta sección.
 - **Disparar con el teclado**: el atajo que tienes asignado. Se cambia en `chrome://extensions/shortcuts`.
+
+### Normas que se imitan
+
+La extensión imita el funcionamiento habitual de las pistolas lectoras de códigos de barras en modo teclado:
+
+- Se comportan como un teclado USB, según la especificación de dispositivos de interfaz humana (USB HID) del USB Implementers Forum: escriben el código y terminan con Enter.
+- Los ISBN siguen la norma **ISO 2108** y en el libro se imprimen como código de barras **EAN-13** (**ISO/IEC 15420**).
+
+Es una herramienta de pruebas: no lee códigos de barras reales, no comprueba que los códigos sean válidos (ni el dígito de control) y no está certificada conforme a ninguna de estas normas.
 
 ## Problemas frecuentes
 

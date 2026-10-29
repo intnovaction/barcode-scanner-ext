@@ -41,6 +41,13 @@ function avisarSinWidget(tabId: number): void {
   }, 3000);
 }
 
-chrome.runtime.onMessage.addListener((mensaje: MensajeFondo) => {
-  if (mensaje.tipo === "abrir-opciones") chrome.runtime.openOptionsPage();
+chrome.runtime.onMessage.addListener((mensaje: MensajeFondo, _remitente, responder) => {
+  if (mensaje.tipo === "abrir-opciones") {
+    chrome.runtime.openOptionsPage();
+  } else if (mensaje.tipo === "pedir-atajo") {
+    chrome.commands.getAll().then(comandos =>
+      responder(comandos.find(c => c.name === "leer-siguiente")?.shortcut ?? ""));
+    // Respuesta asíncrona: mantiene abierto el canal hasta llamar a responder
+    return true;
+  }
 });

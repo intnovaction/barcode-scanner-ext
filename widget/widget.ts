@@ -28,6 +28,9 @@ let eligiendo = false;
 const resultados = new Map<number, boolean>();
 let ultimoResultado: ResultadoLectura | null = null;
 let plegado = false;
+// Atajo de teclado para disparar ("" si no hay). Se pide al montar: si se cambia en
+// chrome://extensions/shortcuts, se ve al recargar la página.
+let atajo = "";
 
 let anfitrion: HTMLElement | null = null;
 let raiz: ShadowRoot | null = null;
@@ -45,6 +48,7 @@ export async function montar(): Promise<void> {
   indiceSiguiente = await cargarIndice();
   const guardado = await chrome.storage.local.get({ [CLAVE_POSICION]: null, [CLAVE_PLEGADO]: false });
   plegado = guardado[CLAVE_PLEGADO] as boolean;
+  atajo = await chrome.runtime.sendMessage<MensajeFondo, string>({ tipo: "pedir-atajo" }).catch(() => "") ?? "";
 
   anfitrion = document.createElement("div");
   anfitrion.id = ID_ANFITRION;
@@ -151,24 +155,38 @@ function pintar(): void {
     chrome.storage.local.set({ [CLAVE_PLEGADO]: plegado });
     pintar();
   });
-  const cabecera = h("div", { className: "cabecera", title: "Arrastra para mover" },
+  // Solo si se ha movido: devuelve la pistola a su sitio (abajo a la derecha)
+  const recolocar = h("button", {
+    type: "button",
+    title: "Volver a colocarla abajo a la derecha",
+    textContent: "↘",
+    hidden: !estaMovida(),
+  });
+  recolocar.addEventListener("click", volverASuSitio);
+  const cabecera = h("div", { className: "cabecera", title: "Arrastra para mover · doble clic para volver a su sitio" },
     h("img", { src: chrome.runtime.getURL("icons/icon16.png"), alt: "" }),
     h("span", { className: "titulo", textContent: "Pistola" }),
+    recolocar,
     plegar);
   hacerArrastrable(cabecera);
+  cabecera.addEventListener("dblclick", e => {
+    if (!(e.target as Element).closest("button")) volverASuSitio();
+  });
 
   const disparar = h("button", {
     type: "button",
     className: "disparar" + (leyendo ? " leyendo" : ""),
     disabled: leyendo || eligiendo || lista.length === 0,
-    title: "Escribe el código en el campo y pulsa Enter",
+    title: "Escribe el código en el campo y pulsa Enter" + (atajo ? `. Sin tocar el ratón: ${atajo}` : ""),
   },
     h("span", { className: "etiqueta", textContent: leyendo ? "Leyendo…" : "Disparar" }),
     h("span", { className: "codigo", textContent: lista[indiceSiguiente] ?? "Sin códigos" }));
   disparar.addEventListener("click", () => leer(indiceSiguiente));
 
   const info = h("div", { className: "info" },
-    h("span", { textContent: lista.length ? `${indiceSiguiente + 1} de ${lista.length}` : "" }));
+    h("span", { textContent: lista.length ? `${indiceSiguiente + 1} de ${lista.length}` : "" }),
+    h("span", { className: "atajo", hidden: !atajo, title: "Dispara sin tocar el ratón: pulsa estas teclas en la página" },
+      "Sin ratón: ", h("kbd", { textContent: atajo })));
 
   const nombreCampo = ajustes.descripcionCampo || ajustes.selector || "donde esté el cursor";
   const campo = h("button", {
@@ -201,7 +219,7 @@ function pintar(): void {
     textContent: ultimoResultado?.mensaje ?? "",
   });
 
-  const opciones = h("button", { type: "button", className: "enlace", textContent: "Opciones" });
+  const opciones = h("button", { type: "button", className: "enlace", textContent: "Más opciones" });
   opciones.addEventListener("click", () => chrome.runtime.sendMessage<MensajeFondo>({ tipo: "abrir-opciones" }));
 
   const widget = h("div", { className: "widget" + (plegado ? " plegado" : "") },
@@ -214,6 +232,17 @@ function pintar(): void {
 }
 
 // ---------- Posición ----------
+
+// Sin posición guardada la pistola va abajo a la derecha (lo marca :host en los estilos)
+const estaMovida = () => !!anfitrion?.style.left;
+
+function volverASuSitio(): void {
+  if (!anfitrion) return;
+  Object.assign(anfitrion.style, { left: "", top: "", right: "", bottom: "" });
+  // El cambio llega a las demás pestañas por storage.onChanged
+  chrome.storage.local.remove(CLAVE_POSICION);
+  pintar();
+}
 
 // Coloca el widget en una posición guardada, sin dejar que se salga de la ventana
 function colocar(posicion: Posicion | null): void {
@@ -231,7 +260,7 @@ function hacerArrastrable(asa: HTMLElement): void {
     const caja = anfitrion.getBoundingClientRect();
     const dx = inicio.clientX - caja.left;
     const dy = inicio.clientY - caja.top;
-    let posicion: Posicion = { x: caja.left, y: caja.top };
+    let posicion: Posicion | null = null;
 
     const mover = (e: MouseEvent) => {
       posicion = { x: e.clientX - dx, y: e.clientY - dy };
@@ -240,7 +269,8 @@ function hacerArrastrable(asa: HTMLElement): void {
     const soltar = () => {
       window.removeEventListener("mousemove", mover, true);
       window.removeEventListener("mouseup", soltar, true);
-      chrome.storage.local.set({ [CLAVE_POSICION]: posicion });
+      // Un clic sin arrastrar (o el doble clic) no cuenta como moverla
+      if (posicion) chrome.storage.local.set({ [CLAVE_POSICION]: posicion });
     };
     window.addEventListener("mousemove", mover, true);
     window.addEventListener("mouseup", soltar, true);
@@ -258,6 +288,11 @@ chrome.storage.onChanged.addListener((cambios, area) => {
   }
   if (cambios.indiceSiguiente && !leyendo) indiceSiguiente = cambios.indiceSiguiente.newValue as number;
   if (cambios[CLAVE_PLEGADO]) plegado = cambios[CLAVE_PLEGADO].newValue as boolean;
+  if (cambios[CLAVE_POSICION]) {
+    const posicion = cambios[CLAVE_POSICION].newValue as Posicion | undefined;
+    if (posicion) colocar(posicion);
+    else Object.assign(anfitrion.style, { left: "", top: "", right: "", bottom: "" });
+  }
   pintar();
 });
 

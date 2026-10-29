@@ -20,8 +20,11 @@
       <p class="hint">Un código por línea. La pistola los lee en orden con <strong>Disparar</strong> y, al llegar al último, vuelve a empezar.</p>
       <textarea id="texto-codigos" rows="8" placeholder="Un código por línea" spellcheck="false"></textarea>
       <div class="barra">
-        <span id="posicion" class="hint"></span>
-        <button id="reiniciar-posicion" type="button">Volver al primero</button>
+        <span class="botones">
+          <span id="posicion" class="hint"></span>
+          <button id="reiniciar-posicion" type="button">Volver al primero</button>
+        </span>
+        <button id="codigos-ejemplo" type="button" title="Tres ISBN de ejemplo y uno que no existe">Poner códigos de ejemplo</button>
       </div>
     </section>
 
@@ -90,6 +93,16 @@
       <h2>Disparar con el teclado</h2>
       <p id="atajo"></p>
       <p class="hint">Lee el siguiente código sin tocar el ratón, aunque la pistola esté oculta. Se cambia en <code>chrome://extensions/shortcuts</code>.</p>
+    </section>
+
+    <section class="acerca">
+      <h2>Acerca de la simulación</h2>
+      <p>La extensión imita el funcionamiento habitual de las pistolas lectoras de códigos de barras en modo teclado:</p>
+      <ul>
+        <li>Se comporta como un teclado USB, según la especificación de dispositivos de interfaz humana (USB HID) del USB Implementers Forum: escribe el código y termina con Enter.</li>
+        <li>Los ISBN siguen la norma <strong>ISO 2108</strong> y en el libro se imprimen como código de barras <strong>EAN-13</strong> (<strong>ISO/IEC 15420</strong>).</li>
+      </ul>
+      <p>Es una herramienta de pruebas: no lee códigos de barras reales, no comprueba que los códigos sean válidos y no está certificada conforme a ninguna de estas normas.</p>
     </section>
   </main>
 

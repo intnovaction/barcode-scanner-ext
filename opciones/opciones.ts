@@ -145,6 +145,15 @@ function enlazarEventos(): void {
     cambiar({ codigos: (e.target as HTMLTextAreaElement).value }).then(pintarPosicion);
   });
   $("reiniciar-posicion").addEventListener("click", () => guardarIndice(0));
+  $("codigos-ejemplo").addEventListener("click", async () => {
+    const ejemplo = AJUSTES_POR_DEFECTO.codigos;
+    if (ajustes.codigos.trim() && ajustes.codigos.trim() !== ejemplo
+      && !confirm("Se sustituirán los códigos que tienes por los de ejemplo. ¿Seguir?")) return;
+    ($("texto-codigos") as HTMLTextAreaElement).value = ejemplo;
+    await cambiar({ codigos: ejemplo });
+    await guardarIndice(0);
+    pintarPosicion();
+  });
   // Escrito a mano: ya no hay nombre legible, se muestra el selector
   $("selector").addEventListener("change", e =>
     cambiar({ selector: (e.target as HTMLInputElement).value.trim(), descripcionCampo: "" }).then(pintarCampo));
